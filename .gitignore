@@ -1,0 +1,6 @@
+db.sqlite3
+*.pyc
+*.swp
+*.zip
+*.png
+db.sqlite3.bak

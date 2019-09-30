@@ -1,0 +1,26 @@
+<!--header start-->
+<header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav top_div"
+        role="banner">
+{#    <script src="/static/jquery.js"></script>#}
+{#    <script src="/static/jquery.cookie.js"></script>#}
+    <!-- 包括所有已编译的插件 -->
+    <div class="container">
+        <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+    <!-- 左边导航 -->
+            <ul class="nav navbar-nav">
+                {% url 'index' as url_index %}    <!-- 首页 -->
+
+                <li {% if request.path == url_index %}class="active"{% endif %}><a href={% url "index" %}>首页</a></li>
+                <li {% if request.path == sensi_details_list_info %}class="active"{% endif %}><a href={% url "sensi_details_list" %}>敏感信息详情</a></li>
+            </ul>
+    <!-- 右边导航 -->
+            <ul class="nav navbar-nav navbar-right">
+                <li ><a href="/admin/">管理</a></li>
+            </ul>
+        </nav>
+    </div>
+
+</header>
+<!--header end-->
+
+
