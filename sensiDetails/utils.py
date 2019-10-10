@@ -13,15 +13,5 @@ def is_valid_details(p_details):
 
 def filter_highlight(p_details):
     for i in ["@@@hl@@@", "@@@endhl@@@"]:
-	p_details = p_details.replace(i, "")
+        p_details = p_details.replace(i, "")
     return p_details
-
-def get_host_ip():
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('8.8.8.8', 80))
-        ip = s.getsockname()[0]
-    finally:
-        s.close()
-
-    return ip

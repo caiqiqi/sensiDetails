@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import traceback
 
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -9,26 +9,27 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect   # 302跳转
 
 from sensiDetails import models
-from wiki_demo import Wiki
-from mail import send_mail
+from .wiki_demo import Wiki
+from .mail import send_mail
 # Create your views here.
 
 NUM_DATA_PER_PAGE = 20 #每一页多少条数据
 
 
-def login(func):
+def is_login(func):
         def wrapper(request,*args,**kwargs):
-                if request.user.is_authenticated():
+                if request.user.is_authenticated:
                         return func(request,*args,**kwargs)
                 return HttpResponseRedirect('/admin')
         return wrapper
 
 
-@login
+@is_login
 def index(request):
     resp = redirect("/sensi_details/get_list/")  # 302跳转到敏感信息详情页面
     return resp
     #return render(request, 'index.html',{})
+
 
 # 渲染响应
 def render_resp(p_sensiList, p_page):
@@ -56,7 +57,7 @@ def render_resp(p_sensiList, p_page):
 
 # 获取所有敏感信息详情列表, 对应：/sensi_details/get_list/
 @csrf_exempt
-@login
+@is_login
 def get_list(request):
     list_data = None
     pages_to_show = None
@@ -83,7 +84,7 @@ def get_list(request):
 
 # 对应：/sensi_details/update/
 @csrf_exempt
-@login
+@is_login
 def update(request):
     try:
         wiki = Wiki()
@@ -97,42 +98,42 @@ def update(request):
         result_undone = models.SensiDetails.objects.all().filter(status=1).order_by("id")  # 只给出"未处理:1"的数据, django.db.models.query.QuerySet类型
         send_mail(result_undone)  # 发送邮件(未处理的)
         return HttpResponse('success')
-    except Exception as e:
-        print e
+    except Exception:
+        print(traceback.format_exc())
         return HttpResponse('fail')
 
 
 @csrf_exempt
-@login
+@is_login
 def ignore(request):    # 2: 忽略
     url = request.POST.get("url")
     try:
         models.SensiDetails.objects.filter(url=url).update(status=2)
         return HttpResponse('success')
-    except Exception as e:
-        print e
+    except Exception:
+        print(traceback.format_exc())
         return HttpResponse('fail')
 
 
 @csrf_exempt
-@login
+@is_login
 def processed(request):  # 0: 已处理
     url = request.POST.get("url")
     try:
         models.SensiDetails.objects.filter(url=url).update(status=0)
         return HttpResponse('success')
-    except Exception as e:
-        print e
+    except Exception:
+        print(traceback.format_exc())
         return HttpResponse('fail')
 
 
 @csrf_exempt
-@login
+@is_login
 def undone(request):    # 1: 未处理
     url = request.POST.get("url")
     try:
         models.SensiDetails.objects.filter(url=url).update(status=1)    
         return HttpResponse('success')
-    except Exception as e:
-        print e
+    except Exception:
+        print(traceback.format_exc())
         return HttpResponse('fail')
